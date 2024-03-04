@@ -1,19 +1,40 @@
+
 version: '3.8'
 
 services:
-    postgres_db:
-        image: postgres:latest
-        container_name: PostgresCont 
-        restart: always
-        environment:
-        - POSTGRES_USER=lgiband
-        - POSTGRES_PASSWORD=mysecretpassword
-        - POSTGRES_DB=piscineds
-        ports:
-        - '5432:5432'
-        volumes:
-        - postgres_db:/mnt/nfs/homes/lgiband/cursus/post-commomcore/data_and_machine_learning/piscine_data_science-42/data
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: lgiband # ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: mysecretpassword # ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: piscineds # ${POSTGRES_DB:-postgres}
+    volumes:
+       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: lgiband@student.42.fr
+      PGADMIN_DEFAULT_PASSWORD: adm-in
+    volumes:
+       - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
 
 volumes:
-    postgres_db:
-        driver: local
+    pgdata:
+    pgadmin-data:
