@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+    postgres_db:
+        image: postgres:latest
+        container_name: PostgresCont 
+        restart: always
+        environment:
+        - POSTGRES_USER=lgiband
+        - POSTGRES_PASSWORD=mysecretpassword
+        - POSTGRES_DB=piscineds
+        ports:
+        - '5432:5432'
+        volumes:
+        - postgres_db:/mnt/nfs/homes/lgiband/cursus/post-commomcore/data_and_machine_learning/piscine_data_science-42/data
+
+volumes:
+    postgres_db:
+        driver: local
