@@ -6,9 +6,9 @@ services:
     container_name: postgres_container
     image: postgres:latest
     environment:
-      POSTGRES_USER: lgiband # ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: mysecretpassword # ${POSTGRES_PASSWORD:-changeme}
-      POSTGRES_DB: piscineds # ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: lgiband
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: piscineds
     volumes:
        - pgdata:/var/lib/postgresql/data
     ports:
