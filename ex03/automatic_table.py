@@ -1,5 +1,22 @@
+
 import pandas
 import sqlalchemy
+import sys
+import os
+
+
+def get_loadable_path(base_path: str):
+    """Return a list of loadable paths from a directory or
+        return the file path or
+        return None if the path is invalid"""
+    if os.path.isdir(base_path):
+        return [os.path.join(base_path, f)
+                for f in os.listdir(base_path)
+                if f.endswith(".csv")]
+    elif os.path.isfile(base_path):
+        return [base_path]
+    else:
+        return None
 
 
 def load(path: str) -> pandas.DataFrame:
@@ -76,20 +93,29 @@ def push_dataset(dataset: pandas.DataFrame, table_name: str):
 
 def main():
     DEFAULT_PATH = \
-        "/mnt/nfs/homes/lgiband/sgoinfre/subject/customer/data_2022_dec.csv"
+        "/home/seriots/42_cursus/piscine-data-science-42/subject/customer/"
+    try:
+        assert len(sys.argv) <= 2, "Usage: python table.py <file.csv>"
+    except AssertionError as e:
+        print(e)
+        return
 
-    path = DEFAULT_PATH
+    if len(sys.argv) == 1:
+        path = [DEFAULT_PATH]
+    else:
+        path = get_loadable_path(sys.argv[1])
 
     if not path:
         print("Invalid path")
         return
 
-    dataset = load(path)
-    if dataset is not None:
-        name = "data_2022_dec"
-        push_dataset(dataset, name)
-    else:
-        print(f"{path}: Failed to load the dataset")
+    for p in path:
+        dataset = load(p)
+        if dataset is not None:
+            name = os.path.basename(p).split(".")[0]
+            push_dataset(dataset, name)
+        else:
+            print(f"{p}: Failed to load the dataset")
 
 
 if __name__ == '__main__':
